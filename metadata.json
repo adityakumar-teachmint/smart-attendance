@@ -1,0 +1,7 @@
+{
+  "name": "SmartClass Attend",
+  "description": "An AI-powered classroom attendance system using facial recognition via Gemini.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
