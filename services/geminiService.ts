@@ -6,7 +6,8 @@ export class AttendanceAIService {
   private ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+    // Correctly initialize GoogleGenAI using the process.env.API_KEY directly.
+    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
   async analyzeClassroom(classroomBase64: string, students: Student[]): Promise<{ studentId: string; present: boolean; confidence: number }[]> {
@@ -32,7 +33,7 @@ export class AttendanceAIService {
       TASK: Classroom Attendance Recognition.
       I have provided one main classroom photo and ${students.length} profile photos of registered students.
       
-      STUENT LIST (in order of attached profile images):
+      STUDENT LIST (in order of attached profile images):
       ${students.map((s, i) => `[ID: ${s.id}] Name: ${s.name} (Image #${i + 1})`).join('\n')}
 
       Compare each student's profile image against the classroom photo. 
@@ -47,13 +48,14 @@ export class AttendanceAIService {
     `;
 
     try {
+      // Use ai.models.generateContent to query GenAI with model name and prompt.
       const response: GenerateContentResponse = await this.ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: {
           parts: [
             { text: prompt },
             classroomPart,
-            ...studentParts.map(p => p.inlineData).map(d => ({ inlineData: d }))
+            ...studentParts
           ]
         },
         config: {
@@ -73,6 +75,7 @@ export class AttendanceAIService {
         },
       });
 
+      // The GenerateContentResponse features a text property (not a method).
       const text = response.text || "[]";
       return JSON.parse(text);
     } catch (error) {
