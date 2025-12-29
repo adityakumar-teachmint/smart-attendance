@@ -1,5 +1,5 @@
 {
-  "name": "SmartClass Attend",
+  "name": "teachmint smart class",
   "description": "An AI-powered classroom attendance system using facial recognition via Gemini.",
   "requestFramePermissions": [
     "camera"
